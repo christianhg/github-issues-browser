@@ -21,9 +21,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run prettier-production && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prettier": "prettier --write --ignore-unknown *",
+    "prettier-production": "prettier --list-different --ignore-unknown *",
+    "prettier-staged": "pretty-quick --staged"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,5 +43,9 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://api.github.com"
+  "proxy": "https://api.github.com",
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0"
+  }
 }

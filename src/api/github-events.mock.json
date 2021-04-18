@@ -48,13 +48,11 @@
           "type": "User",
           "site_admin": false
         },
-        "labels": [
-        ],
+        "labels": [],
         "state": "open",
         "locked": false,
         "assignee": null,
-        "assignees": [
-        ],
+        "assignees": [],
         "milestone": null,
         "comments": 1,
         "created_at": "2020-10-20T07:50:43Z",
@@ -166,14 +164,10 @@
         "merged_at": null,
         "merge_commit_sha": null,
         "assignee": null,
-        "assignees": [
-        ],
-        "requested_reviewers": [
-        ],
-        "requested_teams": [
-        ],
-        "labels": [
-        ],
+        "assignees": [],
+        "requested_reviewers": [],
+        "requested_teams": [],
+        "labels": [],
         "milestone": null,
         "draft": false,
         "commits_url": "https://api.github.com/repos/Dizzydaizys/TypeScript/pulls/27/commits",
@@ -590,13 +584,11 @@
           "type": "User",
           "site_admin": false
         },
-        "labels": [
-        ],
+        "labels": [],
         "state": "open",
         "locked": false,
         "assignee": null,
-        "assignees": [
-        ],
+        "assignees": [],
         "milestone": null,
         "comments": 0,
         "created_at": "2020-10-20T04:32:03Z",
@@ -1123,8 +1115,7 @@
         "state": "open",
         "locked": false,
         "assignee": null,
-        "assignees": [
-        ],
+        "assignees": [],
         "milestone": null,
         "comments": 4,
         "created_at": "2020-10-16T22:38:27Z",
@@ -1287,8 +1278,7 @@
         "state": "open",
         "locked": false,
         "assignee": null,
-        "assignees": [
-        ],
+        "assignees": [],
         "milestone": null,
         "comments": 3,
         "created_at": "2020-10-16T22:38:27Z",

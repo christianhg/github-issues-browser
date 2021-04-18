@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
-export const container = styled.div`
-`;
+export const container = styled.div``;
 
 export const header = styled.div`
   font-size: xx-large;
