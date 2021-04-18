@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import * as s from "./app.styles";
-import { useGithubIssueComments } from "./api/github-events.api";
+import { useGithubIssueComments, IssueQuery } from "./api/github-events.api";
 import ErrorDetails from "./components/error-details";
 
-function App() {
-  const { data, isLoading, isError, error } = useGithubIssueComments();
+const queryClient = new QueryClient();
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <GithubIssueViewer />
+    </QueryClientProvider>
+  );
+}
+
+function GithubIssueViewer() {
+  const [issueQuery, setIssueQuery] = useState({
+    user: "microsoft",
+    repo: "TypeScript",
+  });
+
+  return (
+    <>
+      <GithubIssueForm
+        onSubmit={(issueQuery) => {
+          setIssueQuery(issueQuery);
+        }}
+      />
+      <GithubIssues issueQuery={issueQuery} />
+    </>
+  );
+}
+
+function GithubIssues({ issueQuery }: { issueQuery: IssueQuery }) {
+  const { data, isLoading, isError, error } = useGithubIssueComments(
+    issueQuery
+  );
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -16,7 +47,7 @@ function App() {
 
   return (
     <s.container>
-      <s.header>Recent comments on TypeScript issues:</s.header>
+      <s.header>Recent comments on {issueQuery.repo} issues:</s.header>
       {data?.map((issue) => (
         <div key={issue.id}>
           <s.issuer_title>{issue.title}</s.issuer_title>
@@ -35,4 +66,41 @@ function App() {
   );
 }
 
-export default App;
+function GithubIssueForm({
+  onSubmit,
+}: {
+  onSubmit: (issueQuery: IssueQuery) => void;
+}) {
+  const [user, setUser] = useState("");
+  const [repo, setRepo] = useState("");
+
+  return (
+    <form
+      onSubmit={(e) => {
+        onSubmit({ user, repo });
+
+        setUser("");
+        setRepo("");
+
+        e.preventDefault();
+      }}
+    >
+      <input
+        type="text"
+        placeholder="user"
+        onChange={(e) => {
+          setUser(e.target.value);
+        }}
+      />
+      {"/"}
+      <input
+        type="text"
+        placeholder="repo"
+        onChange={(e) => {
+          setRepo(e.target.value);
+        }}
+      />
+      <button disabled={user === "" || repo === ""}>Go fetch</button>
+    </form>
+  );
+}

@@ -10,8 +10,13 @@ import { fold } from "fp-ts/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
-export function useGithubIssueComments() {
-  const url = `/networks/microsoft/TypeScript/events?per_page=100`;
+export type IssueQuery = {
+  user: string;
+  repo: string;
+};
+
+export function useGithubIssueComments({ user, repo }: IssueQuery) {
+  const url = `/networks/${user}/${repo}/events?per_page=100`;
 
   return useQuery<GithubIssue[], Error>(url, () =>
     axios.get(url).then((res) => mapResult(res.data))
