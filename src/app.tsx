@@ -1,38 +1,42 @@
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { format, formatRelative } from "date-fns";
 import * as s from "./app.styles";
 import { useGithubIssueComments, IssueQuery } from "./api/github-events.api";
 import ErrorDetails from "./components/error-details";
+import { GithubIssue } from "./api/github-events.model";
 
 const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <GithubIssueViewer />
+      <GithubIssuesBrowser />
     </QueryClientProvider>
   );
 }
 
-function GithubIssueViewer() {
+function GithubIssuesBrowser() {
   const [issueQuery, setIssueQuery] = useState({
     user: "microsoft",
     repo: "TypeScript",
   });
 
   return (
-    <>
+    <s.container>
+      <s.h1>GitHub Issues and Comments</s.h1>
       <GithubIssueForm
         onSubmit={(issueQuery) => {
           setIssueQuery(issueQuery);
         }}
       />
-      <GithubIssues issueQuery={issueQuery} />
-    </>
+      <GithubIssuesView issueQuery={issueQuery} />
+    </s.container>
   );
 }
 
-function GithubIssues({ issueQuery }: { issueQuery: IssueQuery }) {
+function GithubIssuesView({ issueQuery }: { issueQuery: IssueQuery }) {
   const { data, isLoading, isError, error } = useGithubIssueComments(
     issueQuery
   );
@@ -46,23 +50,77 @@ function GithubIssues({ issueQuery }: { issueQuery: IssueQuery }) {
   }
 
   return (
-    <s.container>
-      <s.header>Recent comments on {issueQuery.repo} issues:</s.header>
-      {data?.map((issue) => (
-        <div key={issue.id}>
-          <s.issuer_title>{issue.title}</s.issuer_title>
-          <pre>{issue.body}</pre>
-          {issue.comments.map((comment) => (
-            <s.comment_body key={comment.id}>
-              <div>
-                {comment.created_at} {comment.user.login}:
-              </div>
-              <pre>{comment.body}</pre>
-            </s.comment_body>
-          ))}
-        </div>
+    <>
+      {(data ?? []).map((githubIssue) => (
+        <GithubIssueView key={githubIssue.id} githubIssue={githubIssue} />
       ))}
-    </s.container>
+    </>
+  );
+}
+
+function GithubIssueView({ githubIssue }: { githubIssue: GithubIssue }) {
+  return (
+    <>
+      <s.h2>{githubIssue.title}</s.h2>
+      <Byline
+        alternate={true}
+        login={githubIssue.user.login}
+        created_at={githubIssue.created_at}
+      />
+      <Body body={githubIssue.body} />
+      {githubIssue.comments.length > 0 ? (
+        <GithubIssueCommentsViewer comments={githubIssue.comments} />
+      ) : null}
+    </>
+  );
+}
+
+function GithubIssueCommentsViewer({
+  comments,
+}: {
+  comments: GithubIssue["comments"];
+}) {
+  return (
+    <>
+      {comments.map((comment) => (
+        <s.box key={comment.id}>
+          <Byline
+            alternate={false}
+            login={comment.user.login}
+            created_at={comment.created_at}
+          />
+          <Body body={comment.body} />
+        </s.box>
+      ))}
+    </>
+  );
+}
+
+function Byline({
+  alternate,
+  login,
+  created_at,
+}: {
+  alternate: boolean;
+  login: string;
+  created_at: string;
+}) {
+  return (
+    <s.byline
+      title={format(new Date(created_at), "d MMM y k:m")}
+      alternate={alternate}
+    >
+      By <strong>{login}</strong> •{" "}
+      {formatRelative(new Date(created_at), new Date())}
+    </s.byline>
+  );
+}
+
+function Body({ body }: { body: string }) {
+  return (
+    <s.body>
+      <ReactMarkdown>{body}</ReactMarkdown>
+    </s.body>
   );
 }
 
